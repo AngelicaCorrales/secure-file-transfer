@@ -1,10 +1,10 @@
-package model;
+package ui;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import ui.ClientGUI;
+import model.Client;
 
 public class MainClient extends Application{
 	

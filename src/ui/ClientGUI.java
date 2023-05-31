@@ -36,10 +36,16 @@ public class ClientGUI {
 		    alert.setTitle("Load file");
 			String path = fImp.getAbsolutePath();
 			txtLink.setText(path);
-			client.getFilePath(path);
+			client.setFileName(path);
 			alert.setHeaderText(null);
 			alert.setContentText("El archivo ha sido cargado exitosamente.");
 			alert.showAndWait();
     	}
+    }
+	
+    @FXML
+    public void startTransfer(ActionEvent event) {
+    	client.startTransfer();
+
     }
 }

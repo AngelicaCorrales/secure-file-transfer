@@ -14,16 +14,17 @@ public class Client {
 	public static  final int PORT = 12345;
     public static  final String SERVER_IP = "localhost";
 
-    private Cipher cipher;
     private DataInputStream input;
 	private DataOutputStream output;
+	private String fileName;
+	
+	public void setFileName(String fileName) {
+		this.fileName=fileName;
+	}
 
-    public void start(String[] args) {
+    
+	public void startTransfer() {
     	System.setProperty("jdk.crypto.KeyAgreement.legacyKDF", "true");
-
-        checkArguments(args);
-
-        String FILE_NAME = args[0];
 
         try {
             connecting();
@@ -45,17 +46,20 @@ public class Client {
 
             MessageDigest sha = MessageDigest.getInstance("SHA-256");
             
-            //Decrypt
-            SecretKeySpec secretKeySpec = keyToDecrypt(keyAgreement,sha);
+            //Encrypt
+            SecretKeySpec secretKeySpec = keyToEncrypt(keyAgreement,sha);
 
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-           
-            sendIV(cipher,secretKeySpec);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
 
-            sendingFile(cipher, FILE_NAME);
+            sendIV(cipher);
+
+            sendingFile(cipher);
 
             //Sending hash to server
-            sendingHashToServer(sha,FILE_NAME);
+            sendingHashToServer(sha);
+            
+            receivingMessage();
 
             socket.close();
         } catch (Exception e) {
@@ -63,14 +67,8 @@ public class Client {
         }
     }
 
-    public static void checkArguments(String[] args) {
-        if (args.length != 1) {
-            System.out.println("Uso: java Cliente <nombre_archivo>");
-            return;
-        }
-    }
 
-    private void connecting() throws IOException {
+	private void connecting() throws IOException {
         socket = new Socket(SERVER_IP, PORT);
         System.out.println("Connected");
    }
@@ -109,21 +107,26 @@ public class Client {
         return keyAgreement;
     }
 
-    private SecretKeySpec keyToDecrypt(KeyAgreement keyAgreement, MessageDigest sha) throws NoSuchAlgorithmException {
+    private SecretKeySpec keyToEncrypt(KeyAgreement keyAgreement, MessageDigest sha) throws NoSuchAlgorithmException {
     	byte[] hashedKeyBytes = sha.digest( keyAgreement.generateSecret());
-        SecretKeySpec secretKeySpec = new SecretKeySpec(hashedKeyBytes, "AES");
         return new SecretKeySpec(hashedKeyBytes, "AES");
     }
 
-    private void sendIV(Cipher cipher, SecretKeySpec secretKeySpec) throws Exception {
-        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
+    private void sendIV(Cipher cipher) throws Exception {
         byte[] ivBytes = cipher.getIV();
         output.writeInt(ivBytes.length);
         output.write(ivBytes);
     }
 
-    private void sendingFile(Cipher cipher, String file) throws IOException, IllegalBlockSizeException, BadPaddingException {
-    	try (FileInputStream fileSent = new FileInputStream(file)) {
+    private void sendingFile(Cipher cipher) throws IOException, IllegalBlockSizeException, BadPaddingException {
+    	//Enviar la extension del archivo
+    	String[] partsFile=fileName.split(".");
+    	String fileExtension="."+partsFile[partsFile.length-1];
+    	byte[] fileExtensionBytes= fileExtension.getBytes();
+    	output.writeInt(fileExtensionBytes.length);
+    	output.write(fileExtensionBytes);
+    	
+    	try (FileInputStream fileSent = new FileInputStream(fileName)) {
             byte[] buffer = new byte[64];
             int bytesRead;
             while ((bytesRead = fileSent.read(buffer)) != -1) {
@@ -137,9 +140,19 @@ public class Client {
         }
     }
 
-    private void sendingHashToServer(MessageDigest sha, String file) throws IOException{
-    	byte[] hashBytes = sha.digest(Files.readAllBytes(Paths.get(file)));
+    private void sendingHashToServer(MessageDigest sha) throws IOException{
+    	byte[] hashBytes = sha.digest(Files.readAllBytes(Paths.get(fileName)));
         output.writeInt(hashBytes.length);
         output.write(hashBytes);
     }
+    
+
+    private void receivingMessage() throws IOException {
+    	byte[] messageBytes =new byte[input.readInt()];
+    	input.readFully(messageBytes);
+    	String message= new String(messageBytes);
+    	
+    	System.out.println(message);
+    	
+	}
 }

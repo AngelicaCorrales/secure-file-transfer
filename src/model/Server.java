@@ -48,8 +48,6 @@ public class Server {
            
             Cipher cipher =configureCipher(secretKeySpec);
            
-            //OJO CLIENTEEEE
-            
             receivingFile(cipher);
 
             //calcular el hash sobre el archivo recibido, y compararlo con el hash recibido del cliente.
@@ -146,11 +144,16 @@ public class Server {
         input.readFully(hashBytes);
         byte[] serverHashBytes = sha.digest(Files.readAllBytes(Paths.get("fileReceived.txt")));
         boolean compareHash = MessageDigest.isEqual(hashBytes, serverHashBytes);
+        String message="File not transferred successfully";
         if (compareHash) {
-            System.out.println("File transferred successfully");
-        } else {
-            System.out.println("File not transferred successfully");
-        }
+            message="File transferred successfully";
+        } 
+        
+        System.out.println(message);
+        byte[] messageBytes= message.getBytes();
+        output.writeInt(messageBytes.length);
+    	output.write(messageBytes);
+        
     }
         
 }

@@ -78,7 +78,7 @@
       </VBox>
    </top>
    <bottom>
-      <Button mnemonicParsing="false" style="-fx-background-color: #2F72FF;" text="Transferir" textFill="WHITE" BorderPane.alignment="CENTER">
+      <Button mnemonicParsing="false" onAction="#startTransfer" style="-fx-background-color: #2F72FF;" text="Transferir" textFill="WHITE" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="40.0" />
          </BorderPane.margin>
