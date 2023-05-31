@@ -23,33 +23,25 @@ public class Server {
         try {
 
         	connecting();
-
         	initializeDataStream();
-
         	//Diffie Hellman Key exchange
         	PublicKey clientPublicKey = getClientPublicKey();
             
         	KeyPair keyPair=generateServerKeys();
-    
             
             PublicKey serverPublicKey = keyPair.getPublic();
             PrivateKey serverPrivateKey=keyPair.getPrivate();
             
             sendPublicKeyToClient(serverPublicKey);
-        
             
             KeyAgreement keyAgreement= negotiatedKeyDiffieHellman(serverPrivateKey, clientPublicKey);
 
             MessageDigest sha = MessageDigest.getInstance("SHA-256");
-            
             //Decrypt
             
             SecretKeySpec secretKeySpec = keyToDecrypt(keyAgreement,sha);
-           
             Cipher cipher =configureCipher(secretKeySpec);
-           
             receivingFile(cipher);
-
             //calcular el hash sobre el archivo recibido, y compararlo con el hash recibido del cliente.
             checkFileIntegrity(sha);
            
@@ -136,7 +128,9 @@ public class Server {
              input.readFully(encryptedBytes);
              byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
              fileReceived.write(decryptedBytes);
-         }
+        }catch (Exception e){
+                e.printStackTrace();
+        }
     }
     
     private void checkFileIntegrity(MessageDigest sha) throws IOException {
@@ -147,8 +141,7 @@ public class Server {
         String message="File not transferred successfully";
         if (compareHash) {
             message="File transferred successfully";
-        } 
-        
+        }
         System.out.println(message);
         byte[] messageBytes= message.getBytes();
         output.writeInt(messageBytes.length);

@@ -120,7 +120,7 @@ public class Client {
 
     private void sendingFile(Cipher cipher) throws IOException, IllegalBlockSizeException, BadPaddingException {
     	//Enviar la extension del archivo
-    	String[] partsFile=fileName.split(".");
+    	String[] partsFile=fileName.split("\\.");
     	String fileExtension="."+partsFile[partsFile.length-1];
     	byte[] fileExtensionBytes= fileExtension.getBytes();
     	output.writeInt(fileExtensionBytes.length);
