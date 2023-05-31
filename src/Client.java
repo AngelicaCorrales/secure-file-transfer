@@ -12,6 +12,8 @@ import javax.crypto.spec.*;
 public class Client {
 
     public static void main(String[] args) {
+    	
+    	
     	System.setProperty("jdk.crypto.KeyAgreement.legacyKDF", "true");
 
         if (args.length != 1) {
@@ -83,4 +85,8 @@ public class Client {
             e.printStackTrace();
         }
     }
+    
+    public void getFilePath(String path){
+		
+	}
 }
