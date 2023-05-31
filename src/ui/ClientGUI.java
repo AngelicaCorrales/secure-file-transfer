@@ -5,16 +5,18 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
+import model.Client;
 
 public class ClientGUI {
 
 	private Client client;
-
+    
     @FXML
-    private Label labelLink;
+    private TextField txtLink;
     
     @FXML
     private BorderPane mainPanel;
@@ -33,7 +35,7 @@ public class ClientGUI {
     		Alert alert = new Alert(AlertType.INFORMATION);
 		    alert.setTitle("Load file");
 			String path = fImp.getAbsolutePath();
-			labelLink.setText(path);
+			txtLink.setText(path);
 			client.getFilePath(path);
 			alert.setHeaderText(null);
 			alert.setContentText("El archivo ha sido cargado exitosamente.");
