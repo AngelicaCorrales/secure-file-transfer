@@ -48,6 +48,8 @@ public class Server {
            
             Cipher cipher =configureCipher(secretKeySpec);
            
+            //OJO CLIENTEEEE
+            
             receivingFile(cipher);
 
             //calcular el hash sobre el archivo recibido, y compararlo con el hash recibido del cliente.
@@ -120,7 +122,11 @@ public class Server {
     }
     
     private void receivingFile(Cipher cipher) throws IOException, IllegalBlockSizeException, BadPaddingException {
-    	 try (FileOutputStream fileReceived = new FileOutputStream("fileReceived.txt")) {
+    	byte[] fileExtensionBytes =new byte[input.readInt()];
+    	input.readFully(fileExtensionBytes);
+    	String fileExtension= new String(fileExtensionBytes);
+    	
+    	try (FileOutputStream fileReceived = new FileOutputStream("fileReceived"+fileExtension)) {
              int bytesRead;
              while ((bytesRead = input.readInt()) >0) {
                  byte[] encryptedBytes = new byte[bytesRead];
