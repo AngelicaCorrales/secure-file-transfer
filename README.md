@@ -1,7 +1,13 @@
 # Transferencia segura de archivos con esquema de clave simétrica 📲
 
 ## Información del proyecto🚀
-Deben desarrollarse dos programas, uno cliente y uno servidor. El programa servidor debe escuchar por un puerto determinado, y esperar la conexión del cliente. El cliente recibe un nombre de archivo como parámetro. Una vez conectados cliente y servidor, el cliente debe negociar una clave de cifrado con el servidor empleando el algoritmo Diffie-Hellman, y luego transferir el archivo empleando el algoritmo AES con clave de 256 bits, usando la clave previamente negociada. Al final del proceso el cliente debe calcular el hash SHA-256 del archivo que acaba de transmitir, y enviarlo al servidor. El servidor debe calcular el hash sobre el archivo recibido, y compararlo con el hash recibido del cliente. Si son iguales, debe indicarse que el archivo se transfirió adecuadamente.
+Este proyecto consiste en el desarrollo de dos programas: un cliente y un servidor, que permiten la transferencia segura de archivos a través de una conexión en red. El objetivo principal es garantizar la confidencialidad y la integridad de los datos transmitidos.
+
+El programa servidor actúa como receptor y espera la conexión del cliente en un puerto específico. Por su parte, el cliente recibe como parámetro el nombre del archivo que desea transferir. Una vez establecida la conexión entre el cliente y el servidor, se procede a negociar una clave de cifrado utilizando el algoritmo Diffie-Hellman.
+
+Una vez completada la negociación de la clave, el cliente utiliza el algoritmo de cifrado AES con una clave de 256 bits previamente acordada para transferir el archivo de manera segura al servidor. Al finalizar la transferencia, el cliente calcula el hash SHA-256 del archivo transmitido y lo envía al servidor.
+
+El servidor, por su parte, recibe el archivo y realiza el cálculo del hash SHA-256 sobre el mismo. A continuación, compara el hash recibido del cliente con el calculado localmente. Si ambos hashes son idénticos, se considera que el archivo se ha transferido adecuadamente, garantizando su integridad durante todo el proceso.
 
 ## Instalación 🔧💻
 * Este proyecto es compatible con todos los sistemas operativos como Windows, Linux, MacOS.
