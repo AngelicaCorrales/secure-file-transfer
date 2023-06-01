@@ -9,6 +9,10 @@ import java.security.spec.*;
 import javax.crypto.*;
 import javax.crypto.spec.*;
 
+/**
+ * El Server implementa un servidor que realiza un intercambio de claves usando el algoritmo de Diffie-Hellman,
+ * descifra un archivo recibido del cliente y verifica la integridad del archivo.
+ */
 public class Server {
 	private ServerSocket serverSocket;
 	private Socket socket;
@@ -19,6 +23,9 @@ public class Server {
 
     private String fileExtension;
 	
+    /**
+     *start permite iniciar el servidor.
+     */
     public void start() {
     	System.setProperty("jdk.crypto.KeyAgreement.legacyKDF", "true");
 
@@ -53,20 +60,29 @@ public class Server {
             e.printStackTrace();
         }
     }
-    
+
+    /**
+     * connecting permite establecer la conexión con el cliente.
+     */
     private void connecting() throws IOException {
     	 serverSocket = new ServerSocket(PORT);
          System.out.println("waiting for client connection...");
          socket = serverSocket.accept();
          System.out.println("client connected");
     }
-    
+
+    /**
+     * initializeDataStream inicializa los flujos de datos de entrada y salida.
+     */
     private void initializeDataStream() throws IOException {
 
         input = new DataInputStream(socket.getInputStream());
         output = new DataOutputStream(socket.getOutputStream());
     }
-    
+
+    /**
+     * getClientPublicKey obtiene la clave pública del cliente.
+     */
     private PublicKey getClientPublicKey() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
     	int clientPublicKeyLength = input.readInt();
         byte[] clientPublicKeyBytes = new byte[clientPublicKeyLength];
@@ -76,34 +92,49 @@ public class Server {
                
         return keyFactory.generatePublic(x509KeySpec);
     }
-    
+
+    /**
+     * generateServerKeys permite generar un par de claves pública y privada para el servidor.
+     */
     private KeyPair generateServerKeys() throws NoSuchAlgorithmException {
     	 KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("DiffieHellman");
          keyPairGenerator.initialize(2048);
          return keyPairGenerator.generateKeyPair();
     }
-    
+
+    /**
+     * sendPublicKeyToClient envía la clave pública del servidor al cliente.
+     */
     private void sendPublicKeyToClient(PublicKey serverPublicKey) throws IOException {
     	 byte[] publicKeyBytes = serverPublicKey.getEncoded();
          output.writeInt(publicKeyBytes.length);
          output.write(publicKeyBytes);
 
     }
-    
+
+    /**
+     * negotiatedKeyDiffieHellman realiza la negociación de claves Diffie-Hellman entre el servidor y el cliente.
+     */
     private KeyAgreement negotiatedKeyDiffieHellman(PrivateKey serverPrivateKey, PublicKey clientPublicKey) throws NoSuchAlgorithmException, InvalidKeyException {
     	KeyAgreement keyAgreement = KeyAgreement.getInstance("DiffieHellman");
         keyAgreement.init(serverPrivateKey);
         keyAgreement.doPhase(clientPublicKey, true);
         return keyAgreement;
     }
-    
+
+    /**
+     * keyToDecrypt convierte la clave acordada en una clave para descifrar el archivo.
+     */
     private SecretKeySpec keyToDecrypt(KeyAgreement keyAgreement, MessageDigest sha) throws NoSuchAlgorithmException {
     	//algoritmo AES con clave de 256 bits, usando la clave previamente negociada
        
         byte[] hashedKeyBytes = sha.digest(keyAgreement.generateSecret());
         return new SecretKeySpec(hashedKeyBytes, "AES");
     }
-    
+
+    /**
+     * configureCipher configura el cifrado con la clave para descifrar el archivo y el vector de inicialización.
+     */
     private Cipher configureCipher(SecretKeySpec secretKeySpec) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IOException {
     	 int ivLength = input.readInt();
          byte[] ivBytes = new byte[ivLength];
@@ -112,9 +143,12 @@ public class Server {
          cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, new IvParameterSpec(ivBytes));
          return cipher;
     }
-    
 
 
+
+    /**
+     * receivingFile recibe el archivo cifrado del cliente, lo descifra y lo guarda.
+     */
     private void receivingFile(Cipher cipher) throws IOException, IllegalBlockSizeException, BadPaddingException {
         byte[] fileExtensionBytes =new byte[input.readInt()];
         input.readFully(fileExtensionBytes);
@@ -131,7 +165,10 @@ public class Server {
         }
 
     }
-    
+
+    /**
+     * checkFileIntegrity verifica la integridad del archivo recibido comparando su hash con el hash recibido del cliente.
+     */
     private void checkFileIntegrity(MessageDigest sha) throws IOException {
 
         byte[] hashBytes = new byte[input.readInt()];
