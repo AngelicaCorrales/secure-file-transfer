@@ -21,11 +21,17 @@ public class ClientGUI {
     @FXML
     private BorderPane mainPanel;
 
-    
+	/**
+	 * Constructor de la clase ClientGUI que recibe un cliente como parámetro.
+	 */
 	public ClientGUI(Client cl) {
 		client = cl;
 	}
 
+	/**
+	 * Método invocado al hacer clic en el botón de "cargar archivo".
+	 * Abre un cuadro de diálogo para seleccionar un archivo y actualiza el campo de texto con la ruta del archivo seleccionado.
+	 */
 	@FXML
     public void loadFile(ActionEvent event){
     	FileChooser fileChooser = new FileChooser();
@@ -42,7 +48,11 @@ public class ClientGUI {
 			alert.showAndWait();
     	}
     }
-	
+
+	/**
+	 * Método invocado al hacer clic en el botón de transferencia.
+	 * Se inicia la transferencia del archivo seleccionado por el cliente.
+	 */
     @FXML
     public void startTransfer(ActionEvent event) {
     	client.startTransfer();

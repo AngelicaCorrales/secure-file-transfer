@@ -5,7 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="03c337a7-3066-4bf5-bf95-71b991425ce0" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/ui/ServerMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/ServerMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/ClientGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/ClientGUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/MainClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/MainClient.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,7 +29,8 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true"
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "C:/Users/keren/OneDrive/Escritorio/ICESI/Septimo_Semestre/Seguridad/secure-file-transfer"
   }
 }]]></component>
   <component name="RunManager" selected="Application.MainClient">
@@ -73,5 +77,16 @@
       <updated>1685583127518</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

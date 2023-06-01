@@ -12,19 +12,22 @@ import javax.crypto.spec.*;
 public class Client {
     private Socket socket;
 	public static  final int PORT = 12345;
-    public static  final String SERVER_IP = "localhost";
+    public static  final String SERVER_IP = "10.147.19.59";
 
     private DataInputStream input;
 	private DataOutputStream output;
 	private String fileName;
-	
+
+    /**
+     * Establece el nombre del archivo que se transferirá.
+     */
 	public void setFileName(String fileName) {
-
 		this.fileName=fileName.replace("\\","\\\\");
-
 	}
 
-    
+    /**
+     * Inicia la transferencia de archivos al servidor remoto.
+     */
 	public void startTransfer() {
     	System.setProperty("jdk.crypto.KeyAgreement.legacyKDF", "true");
 
@@ -33,22 +36,22 @@ public class Client {
             
             initializeDataStream();
 
-            //Generated pair keys (public and private)
+            //Genera un par de claves (pública y privada)
             KeyPair keyPair=generateClientKeys();
             PublicKey clientPublicKey = keyPair.getPublic();
             PrivateKey clientPrivateKey=keyPair.getPrivate();
 
-            //Send key to server
+            //Envía la clave pública al servidor
             sendPublicKeyToServer(clientPublicKey);
 
-            //Diffie Hellman Key exchange
+            //Realiza el intercambio de claves de Diffie-Hellman
         	PublicKey serverPublicKey = getServerPublicKey();
 
             KeyAgreement keyAgreement=negotiatedKeyDiffieHellman(clientPrivateKey,serverPublicKey);
 
             MessageDigest sha = MessageDigest.getInstance("SHA-256");
             
-            //Encrypt
+            //Encripta el archivo utilizando la clave acordada
             SecretKeySpec secretKeySpec = keyToEncrypt(keyAgreement,sha);
 
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
@@ -56,9 +59,10 @@ public class Client {
 
             sendIV(cipher);
 
+            //Envía el archivo encriptado
             sendingFile(cipher);
 
-            //Sending hash to server
+            //Envía el hash del archivo al servidor
             sendingHashToServer(sha);
             
             receivingMessage();
@@ -69,30 +73,43 @@ public class Client {
         }
     }
 
-
+    /**
+     * Establece la conexión con el servidor remoto.
+     */
 	private void connecting() throws IOException {
         socket = new Socket(SERVER_IP, PORT);
         System.out.println("Connected");
    }
 
+    /**
+     * Inicializa los flujos de datos de entrada y salida.
+     */
     private void initializeDataStream() throws IOException {
         input = new DataInputStream(socket.getInputStream());
         output = new DataOutputStream(socket.getOutputStream());
     }
 
+    /**
+     * Genera un par de claves (pública y privada) utilizando el algoritmo Diffie-Hellman.
+     */
     private KeyPair generateClientKeys() throws NoSuchAlgorithmException {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("DiffieHellman");
         keyPairGenerator.initialize(2048);
         return keyPairGenerator.generateKeyPair();
    }
 
+    /**
+     * Envía la clave pública del cliente al servidor.
+     */
    private void sendPublicKeyToServer(PublicKey clientePublicKey) throws IOException {
         byte[] publicKeyBytes = clientePublicKey.getEncoded();
         output.writeInt(publicKeyBytes.length);
         output.write(publicKeyBytes);
     }
-   
 
+    /**
+     * Obtiene la clave pública del servidor desde el flujo de entrada.
+     */
    private PublicKey getServerPublicKey() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         int serverPublicKeyLength = input.readInt();
         byte[] serverPublicKeyBytes = new byte[serverPublicKeyLength];
@@ -102,6 +119,10 @@ public class Client {
         return keyFactory.generatePublic(x509KeySpec);
     }
 
+    /**
+     * Realiza el intercambio de claves de Diffie-Hellman, a partir de
+     * la clave privada del cliente y la clave pública del servidor.
+     */
     private KeyAgreement negotiatedKeyDiffieHellman(PrivateKey clientPrivateKey, PublicKey serverPublicKey) throws NoSuchAlgorithmException, InvalidKeyException {
     	KeyAgreement keyAgreement = KeyAgreement.getInstance("DiffieHellman");
         keyAgreement.init(clientPrivateKey);
@@ -109,19 +130,26 @@ public class Client {
         return keyAgreement;
     }
 
+    /**
+     * Convierte la clave acordada en una especificación SecretKeySpec para encriptación.
+     **/
     private SecretKeySpec keyToEncrypt(KeyAgreement keyAgreement, MessageDigest sha) throws NoSuchAlgorithmException {
     	byte[] hashedKeyBytes = sha.digest( keyAgreement.generateSecret());
         return new SecretKeySpec(hashedKeyBytes, "AES");
     }
 
+    /**
+     * Envía el vector de inicialización (IV) al servidor.
+     */
     private void sendIV(Cipher cipher) throws Exception {
         byte[] ivBytes = cipher.getIV();
         output.writeInt(ivBytes.length);
         output.write(ivBytes);
     }
 
-
-
+    /**
+     * Envía el archivo encriptado al servidor.
+     */
     private void sendingFile(Cipher cipher) throws IOException, IllegalBlockSizeException, BadPaddingException {
         //Enviar la extension del archivo
         String[] partsFile=fileName.split("\\.");
@@ -141,12 +169,18 @@ public class Client {
 
     }
 
+    /**
+     * Envía el hash del archivo al servidor.
+     */
     private void sendingHashToServer(MessageDigest sha) throws IOException{
     	byte[] hashBytes = sha.digest(Files.readAllBytes(Paths.get(fileName)));
         output.writeInt(hashBytes.length);
         output.write(hashBytes);
     }
-    
+
+    /**
+     * Recibe un mensaje del servidor.
+     */
     private void receivingMessage() throws IOException {
     	byte[] messageBytes =new byte[input.readInt()];
     	input.readFully(messageBytes);
