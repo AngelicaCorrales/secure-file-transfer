@@ -1,8 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="03c337a7-3066-4bf5-bf95-71b991425ce0" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/model/Client.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/model/Client.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/model/Server.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/model/Server.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prueba.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/Server.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2QaE708lvKaQ2hHyZoxkoBrZELd" />
   <component name="ProjectViewState">
-    <option name="autoscrollToSource" value="true" />
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="Application.MainClient">
+    <configuration name="MainClient" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="ui.MainClient" />
+      <module name="secure-file-transfer" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="ui.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ServerMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="ui.ServerMain" />
+      <module name="secure-file-transfer" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="ui.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.MainClient" />
+        <item itemvalue="Application.ServerMain" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="03c337a7-3066-4bf5-bf95-71b991425ce0" name="Changes" comment="" />
+      <created>1685583127518</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1685583127518</updated>
+    </task>
+    <servers />
   </component>
 </project>

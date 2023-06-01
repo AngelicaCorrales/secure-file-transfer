@@ -16,6 +16,8 @@ public class Server {
 	
 	private DataInputStream input;
 	private DataOutputStream output;
+
+    private String fileExtension;
 	
     public void start() {
     	System.setProperty("jdk.crypto.KeyAgreement.legacyKDF", "true");
@@ -111,32 +113,32 @@ public class Server {
          return cipher;
     }
     
+
+
     private void receivingFile(Cipher cipher) throws IOException, IllegalBlockSizeException, BadPaddingException {
-    	byte[] fileExtensionBytes =new byte[input.readInt()];
-    	input.readFully(fileExtensionBytes);
-    	String fileExtension= new String(fileExtensionBytes);
-    	
-    	try (FileOutputStream fileReceived = new FileOutputStream("fileReceived"+fileExtension)) {
-             int bytesRead;
-             while ((bytesRead = input.readInt()) >0) {
-                 byte[] encryptedBytes = new byte[bytesRead];
-                 input.readFully(encryptedBytes);
-                 byte[] decryptedBytes = cipher.update(encryptedBytes);
-                 fileReceived.write(decryptedBytes);
-             }
-             byte[] encryptedBytes = new byte[input.readInt()];
-             input.readFully(encryptedBytes);
-             byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
-             fileReceived.write(decryptedBytes);
+        byte[] fileExtensionBytes =new byte[input.readInt()];
+        input.readFully(fileExtensionBytes);
+        fileExtension= new String(fileExtensionBytes);
+        try (FileOutputStream fileReceived = new FileOutputStream("files_received/fileReceived"+fileExtension)) {
+            int bytesRead= input.readInt();
+            byte[] encryptedBytes = new byte[bytesRead];
+            input.readFully(encryptedBytes);
+
+            byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+            fileReceived.write(decryptedBytes);
         }catch (Exception e){
-                e.printStackTrace();
+            e.printStackTrace();
         }
+
     }
     
     private void checkFileIntegrity(MessageDigest sha) throws IOException {
-    	byte[] hashBytes = new byte[input.readInt()];
+
+        byte[] hashBytes = new byte[input.readInt()];
         input.readFully(hashBytes);
-        byte[] serverHashBytes = sha.digest(Files.readAllBytes(Paths.get("fileReceived.txt")));
+
+        byte[] serverHashBytes = sha.digest(Files.readAllBytes(Paths.get("files_received/fileReceived"+fileExtension)));
+
         boolean compareHash = MessageDigest.isEqual(hashBytes, serverHashBytes);
         String message="File not transferred successfully";
         if (compareHash) {

@@ -19,7 +19,9 @@ public class Client {
 	private String fileName;
 	
 	public void setFileName(String fileName) {
-		this.fileName=fileName;
+
+		this.fileName=fileName.replace("\\","\\\\");
+
 	}
 
     
@@ -118,26 +120,25 @@ public class Client {
         output.write(ivBytes);
     }
 
+
+
     private void sendingFile(Cipher cipher) throws IOException, IllegalBlockSizeException, BadPaddingException {
-    	//Enviar la extension del archivo
-    	String[] partsFile=fileName.split("\\.");
-    	String fileExtension="."+partsFile[partsFile.length-1];
-    	byte[] fileExtensionBytes= fileExtension.getBytes();
-    	output.writeInt(fileExtensionBytes.length);
-    	output.write(fileExtensionBytes);
-    	
-    	try (FileInputStream fileSent = new FileInputStream(fileName)) {
-            byte[] buffer = new byte[64];
-            int bytesRead;
-            while ((bytesRead = fileSent.read(buffer)) != -1) {
-                byte[] encryptedBytes = cipher.update(buffer, 0, bytesRead);
-                output.writeInt(encryptedBytes.length);
-                output.write(encryptedBytes);
-            }
-            byte[] encryptedBytes = cipher.doFinal();
+        //Enviar la extension del archivo
+        String[] partsFile=fileName.split("\\.");
+        String fileExtension="."+partsFile[partsFile.length-1];
+        byte[] fileExtensionBytes= fileExtension.getBytes();
+        output.writeInt(fileExtensionBytes.length);
+        output.write(fileExtensionBytes);
+
+        try (FileInputStream fileSent = new FileInputStream(fileName)) {
+            byte[] fileBytes = new byte[fileSent.available()];
+            fileSent.read(fileBytes);
+            byte[] encryptedBytes = cipher.doFinal(fileBytes);
             output.writeInt(encryptedBytes.length);
             output.write(encryptedBytes);
+
         }
+
     }
 
     private void sendingHashToServer(MessageDigest sha) throws IOException{
@@ -146,7 +147,6 @@ public class Client {
         output.write(hashBytes);
     }
     
-
     private void receivingMessage() throws IOException {
     	byte[] messageBytes =new byte[input.readInt()];
     	input.readFully(messageBytes);
